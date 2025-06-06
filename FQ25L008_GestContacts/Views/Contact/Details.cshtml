@@ -1,0 +1,27 @@
+﻿@model Contact
+
+@{
+    ViewBag.Title = $"Détails du contact : {Model.Id}";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            Id : @Model.Id
+        </div>
+        <div class="col-md-6">
+            Nom : @Model.Nom
+        </div>
+        <div class="col-md-6">
+            Prénom : @Model.Prenom
+        </div>
+        <div class="col-md-6">
+            Email : @Model.Email
+        </div>
+        <div class="col-md-6">
+            Tel : @Model.Tel
+        </div>
+    </div>
+</div>
+
+<a href="~/contact">Retour à la liste</a>
