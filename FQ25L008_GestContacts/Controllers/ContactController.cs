@@ -42,12 +42,13 @@ namespace FQ25L008_GestContacts.Controllers
             return View(contact);
         }
 
+        [HttpGet] // Http Verb Get
         public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost] // Http Verb Post
         public IActionResult Create(CreateContactForm form)
         {
             return View();
