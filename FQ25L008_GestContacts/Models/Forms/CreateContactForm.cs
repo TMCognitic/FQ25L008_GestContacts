@@ -15,7 +15,8 @@ namespace FQ25L008_GestContacts.Models.Forms
         [DisplayName("Prénom : ")]
         public string Prenom { get; set; }
         [Required]
-        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
+        [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")]
         [DisplayName("Adresse email : ")]        
         public string Email { get; set; }
         [DisplayName("Téléphone : ")]

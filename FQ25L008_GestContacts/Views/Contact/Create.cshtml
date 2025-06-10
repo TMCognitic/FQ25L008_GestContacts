@@ -1,44 +1,51 @@
-﻿
+﻿@model FQ25L008_GestContacts.Models.Forms.CreateContactForm
+
+
 <div class="container">
     <div class="row">
-        <div class="col-md-4">
-            <form method="post">
+        <div class="col-md-6">
+            @using(Html.BeginForm())
+            {
                 @if(ViewContext.ModelState.ErrorCount > 0)
                 {
                     <div>
-                        <p>Il y a @ViewContext.ModelState.ErrorCount erreur(s) dans mon formulaire</p>
+                        <p class="alert-danger">Il y a @ViewContext.ModelState.ErrorCount erreur(s) dans mon formulaire</p>
                     </div>
+                    @Html.ValidationSummary(true, null, new { @class = "alert-danger" })
                 }
 
                 <div class="form-group">
-                    <label for="Nom">Nom : </label>
+                    @Html.LabelFor(m => m.Nom)
                     <div>
-                        <input class="form-control" type="text" placeholder="Nom" name="Nom" />
+                        @Html.TextBoxFor(m => m.Nom, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Nom, null, new { @class = "alert-danger" })
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Nom">Prenom : </label>
+                    @Html.LabelFor(m => m.Prenom)
                     <div>
-                        <input class="form-control" type="text" placeholder="Prénom" name="Prenom" />
+                        @Html.TextBoxFor(m => m.Prenom, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Prenom, null, new { @class = "alert-danger" })
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Nom">Email : </label>
+                    @Html.LabelFor(m => m.Email)
                     <div>
-                        <input class="form-control" type="email" placeholder="Email" name="Email" />
+                        @Html.TextBoxFor(m => m.Email, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email, null, new { @class = "alert-danger" })
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Nom">Tel : </label>
+                    @Html.LabelFor(m => m.Tel)
                     <div>
-                        <input class="form-control" type="text" placeholder="Téléphone" name="Tel" />
+                        @Html.TextBoxFor(m => m.Tel, null, new { @class = "form-control" })
                     </div>
                 </div>
                 <hr />
                 <div>
                     <input type="submit" value="Envoyer" class="btn btn-primary" />
                 </div>
-            </form>
+            }
         </div>  
     </div>
 </div>
