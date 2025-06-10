@@ -2,8 +2,10 @@
 using FQ25L008_GestContacts.Models;
 using FQ25L008_GestContacts.Models.Forms;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes;
 using Microsoft.Data.SqlClient;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace FQ25L008_GestContacts.Controllers
 {
@@ -42,16 +44,28 @@ namespace FQ25L008_GestContacts.Controllers
             return View(contact);
         }
 
-        [HttpGet] // Http Verb Get
+        //[HttpGet] // Http Verb Get
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost] // Http Verb Post
+        [ValidateAntiForgeryToken]
         public IActionResult Create(CreateContactForm form)
         {
-            return View();
+            if(!ModelState.IsValid)
+            {
+                return View(form);
+            }
+
+            //Insertion dans la DB
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
+            {
+                connection.Open();
+                connection.ExecuteNonQuery("INSERT INTO PERSONNE (Nom, Prenom, Email, Tel) VALUES (@Nom, @Prenom, @Email, @Tel)", parameters:form);
+            }
+            return RedirectToAction("Index");            
         }
     }
 }
