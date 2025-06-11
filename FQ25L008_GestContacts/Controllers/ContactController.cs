@@ -67,5 +67,47 @@ namespace FQ25L008_GestContacts.Controllers
             }
             return RedirectToAction("Index");            
         }
+
+        public IActionResult Edit(int id)
+        {
+            Contact? contact;
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
+            {
+                connection.Open();
+                contact = connection.ExecuteReader("SELECT Id, Nom, Prenom, Email, Tel FROM Personne WHERE Id = @Id",
+                    reader => new Contact((int)reader["Id"], (string)reader["Nom"],
+                                (string)reader["Prenom"], (string)reader["Email"],
+                                reader["Tel"] as string), parameters: new { id }).SingleOrDefault();
+            }
+
+            if (contact is null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            UpdateContactForm updateContactForm = new UpdateContactForm()
+            {
+                Id = contact.Id,
+                Nom = contact.Nom,
+                Prenom = contact.Prenom,
+                Email = contact.Email,
+                Tel = contact.Tel
+            };
+
+            return View(updateContactForm);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, UpdateContactForm form)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(form);
+            }
+
+            // Update au niveau de la DB
+
+            return RedirectToAction("Index");
+        }
     }
 }
