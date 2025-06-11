@@ -1,11 +1,10 @@
 ﻿@model Contact
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Delete";
 }
 
-<h1>Details</h1>
-
+<h3>Êtes-vous sûre de vouloir supprimer cet élément ?</h3>
 <div>
     <h4>Contact</h4>
     <hr />
@@ -41,8 +40,9 @@
             @Html.DisplayFor(model => model.Tel)
         </dd>
     </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { Model.Id }) |
-    <a asp-action="Index">Back to List</a>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-info">Retour à la liste</a>        
+    </form>
 </div>

@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FQ25L008_GestContacts.Dal\FQ25L008_GestContacts.Dal.csproj" />
+  </ItemGroup>
+
 </Project>

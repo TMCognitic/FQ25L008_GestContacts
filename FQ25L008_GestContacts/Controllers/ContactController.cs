@@ -1,42 +1,30 @@
-﻿using BStorm.Tools.Database;
-using FQ25L008_GestContacts.Models;
+﻿using FQ25L008_GestContacts.Dal.Entities;
+using FQ25L008_GestContacts.Dal.Repositories;
 using FQ25L008_GestContacts.Models.Forms;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes;
-using Microsoft.Data.SqlClient;
-using System.Collections;
-using System.Text.RegularExpressions;
+
 
 namespace FQ25L008_GestContacts.Controllers
 {
     public class ContactController : Controller
     {
-        const string CONNECTION_STRING = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DemoAdo;Integrated Security=True;Encrypt=True;Trust Server Certificate=True;";
+        private readonly IContactRepository _repository;
+
+        public ContactController(IContactRepository repository)
+        {
+            _repository = repository;
+        }
+
         public IActionResult Index()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Open();
-                return View(connection.ExecuteReader("SELECT Id, Nom, Prenom, Email, Tel FROM Personne",
-                    reader => new Contact((int)reader["Id"], (string)reader["Nom"],
-                                (string)reader["Prenom"], (string)reader["Email"],
-                                reader["Tel"] as string)).ToList());
-            }
+            return View(_repository.Get());
         }
 
         public IActionResult Details(int id)
         {
-            Contact? contact;
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Open();
-                contact = connection.ExecuteReader("SELECT Id, Nom, Prenom, Email, Tel FROM Personne WHERE Id = @Id",
-                    reader => new Contact((int)reader["Id"], (string)reader["Nom"],
-                                (string)reader["Prenom"], (string)reader["Email"],
-                                reader["Tel"] as string), parameters: new { id }).SingleOrDefault();
-            }
+            Contact? contact = _repository.Get(id);
 
-            if(contact is null)
+            if (contact is null)
             {
                 return RedirectToAction("Index");
             }
@@ -54,31 +42,19 @@ namespace FQ25L008_GestContacts.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CreateContactForm form)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(form);
             }
 
             //Insertion dans la DB
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Open();
-                connection.ExecuteNonQuery("INSERT INTO PERSONNE (Nom, Prenom, Email, Tel) VALUES (@Nom, @Prenom, @Email, @Tel)", parameters:form);
-            }
-            return RedirectToAction("Index");            
+            _repository.Insert(new Contact() { Nom = form.Nom, Prenom = form.Prenom, Email = form.Email, Tel = form.Tel });
+            return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            Contact? contact;
-            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Open();
-                contact = connection.ExecuteReader("SELECT Id, Nom, Prenom, Email, Tel FROM Personne WHERE Id = @Id",
-                    reader => new Contact((int)reader["Id"], (string)reader["Nom"],
-                                (string)reader["Prenom"], (string)reader["Email"],
-                                reader["Tel"] as string), parameters: new { id }).SingleOrDefault();
-            }
+            Contact? contact = _repository.Get(id);
 
             if (contact is null)
             {
@@ -100,12 +76,33 @@ namespace FQ25L008_GestContacts.Controllers
         [HttpPost]
         public IActionResult Edit(int id, UpdateContactForm form)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(form);
             }
 
             // Update au niveau de la DB
+            _repository.Update(new Contact() { Id = id, Nom = form.Nom, Prenom = form.Prenom, Email = form.Email, Tel = form.Tel });
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            Contact? contact = _repository.Get(id);
+           
+            if (contact is null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(contact);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id, IFormCollection form)
+        {
+            _repository.Delete(id);           
 
             return RedirectToAction("Index");
         }
